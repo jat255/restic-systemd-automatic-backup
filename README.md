@@ -36,6 +36,8 @@ You will need to edit a couple of configuration files:
 | `/etc/restic/restic_env.sh`  | Add path to repository and password  |
 | `/etc/restic/restic_backup_excludes`  | Add/remove any files/directories to be excluded  |
 | `/usr/lib/systemd/system/status-email-user@.service`  | Insert your email address as needed  |
+| `/usr/lib/systemd/system/restic-backup.timer` | Modify backup schedule as desired |
+| `/usr/lib/systemd/system/restic-check.timer` | Modify backup checking schedule as desired |
 
 ### 3. Initialize remote repo (optional if already done)
 
