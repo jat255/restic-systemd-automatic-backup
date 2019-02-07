@@ -59,7 +59,7 @@ Now see if the backup itself works, by running
 restic snapshots
 ```
 
-Use `sudo` if you're trying to backup root-only readible files.
+Use `sudo` if you're trying to backup root-only readable files.
 
 ### 6. Backup automatically; systemd service + timer
 
