@@ -16,41 +16,12 @@
 # One option that I used with my old Axis cameras it to use my gmx.com accunt for sending emails instead, as there are (no?) higher limits there.
 MIN_WAIT_TIME_S=900
 SCRIPT_NAME=$(basename $0)
-LAST_RUN_FILE="/tmp/${SCRIPT_NAME}_last_run.txt"
-
-last_touch() {
-	stat -c %Y $1
-}
-
-waited_long_enough() {
-	retval=1
-	if [ -e $LAST_RUN_FILE ]; then
-		now=$(date +%s)
-		last=$(last_touch $LAST_RUN_FILE)
-		wait_s=$(expr $now - $last)
-		if [ "$wait_s" -gt "$MIN_WAIT_TIME_S" ]; then
-			retval=0
-		fi
-	else
-		retval=0
-	fi
-
-	[ $retval -eq 0 ] && touch $LAST_RUN_FILE
-	return $retval
-}
-
-
-# Make sure that my Gmail account dont' get shut down because of sending too many emails!
-if ! waited_long_enough; then
-	echo "Systemd email was not sent, as it's less than ${MIN_WAIT_TIME_S} seconds since the last one was sent."
-	exit 1
-fi
-
 
 recipient=$1
 system_unit=$2
 
 mail -t <<ERRMAIL
+Importance: High
 To: $recipient
 Subject: [systemd-email] ${system_unit}
 Content-Transfer-Encoding: 8bit
