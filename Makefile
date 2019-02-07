@@ -4,7 +4,7 @@
 ### Macros ###
 SRCS_SCRIPTS	= $(filter-out %cron_mail, $(wildcard usr/local/sbin/*))
 SRCS_CONF	= $(wildcard etc/restic/*)
-SRCS_EXCLUDE	= .backup_exclude
+SRCS_EXCLUDE	= example.backup_exclude
 SRCS_SYSTEMD	= $(wildcard etc/systemd/system/*)
 
 # Just set PREFIX in envionment, like
