@@ -2,14 +2,14 @@
 .PHONY: help install install-scripts install-conf install-exclude install-systemd
 
 ### Macros ###
-SRCS_SCRIPTS	= $(filter-out %cron_mail, $(wildcard usr/local/sbin/*))
+SRCS_SCRIPTS	= $(filter-out %cron_mail, $(wildcard usr/bin/*))
 SRCS_CONF	= $(wildcard etc/restic/*)
 SRCS_EXCLUDE	= example.backup_exclude
 SRCS_SYSTEMD	= $(wildcard etc/systemd/system/*)
 
 # Just set PREFIX in envionment, like
 # $ PREFIX=/tmp/test make
-DEST_SCRIPTS	= $(PREFIX)/usr/local/sbin
+DEST_SCRIPTS	= $(PREFIX)/usr/bin
 DEST_CONF	= $(PREFIX)/etc/restic
 DEST_EXCLUDE	= $(PREFIX)/
 DEST_SYSTEMD	= $(PREFIX)/etc/systemd/system
