@@ -16,18 +16,14 @@ exit_hook() {
 trap exit_hook INT TERM
 
 
-source /etc/restic/b2_env.sh
-
-# How many network connections to set up to B2. Default is 5.
-B2_CONNECTIONS=50
+source /etc/restic/restic_env.sh
 
 # Remove locks from other stale processes to keep the automated backup running.
-# NOTE nope, dont' unlock liek restic_backup.sh. restic_backup.sh should take preceedance over this script.
+# NOTE nope, dont' unlock like restic_backup.sh. restic_backup.sh should take preceedance over this script.
 #restic unlock &
 #wait $!
 
 # Check repository for errors.
 restic check \
-	--option b2.connections=$B2_CONNECTIONS \
 	--verbose &
 wait $!

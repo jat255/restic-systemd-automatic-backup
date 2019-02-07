@@ -6,4 +6,4 @@ Conflicts=restic.service
 [Service]
 Type=simple
 Nice=10
-ExecStart=/usr/local/sbin/restic_check.sh
+ExecStart=/usr/bin/restic_check.sh
