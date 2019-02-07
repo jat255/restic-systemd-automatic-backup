@@ -1,0 +1,11 @@
+/home/**/.cache/*
+/home/**/.config/google-chrome/*
+/var/cache/*
+/dev/*         
+/proc/*
+/sys/*
+/tmp/*
+/run/*
+/mnt/*
+/lost+found/*
+/swapfile        

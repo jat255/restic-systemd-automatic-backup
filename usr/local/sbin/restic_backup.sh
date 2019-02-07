@@ -23,7 +23,7 @@ RETENTION_YEARS=10
 
 # What to backup, and what to not
 BACKUP_PATHS="/"
-BACKUP_EXCLUDES="--exclude-file /home/josh/.restic_excludes"
+BACKUP_EXCLUDES="--exclude-file /etc/restic/restic_backup_excludes"
 BACKUP_TAG=systemd.timer
 
 
