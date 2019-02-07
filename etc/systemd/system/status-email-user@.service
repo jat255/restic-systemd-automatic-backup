@@ -6,6 +6,6 @@ Description=Send status email for %i to user
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/systemd-email jat255@gmail.com %i
+ExecStart=/usr/bin/systemd-email <email address> %i
 User=root
 Group=systemd-journal
