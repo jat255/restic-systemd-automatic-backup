@@ -2,7 +2,7 @@
 .PHONY: help install install-scripts install-conf install-exclude install-systemd
 
 ### Macros ###
-SRCS_SCRIPTS	= $(filter-out %cron_mail, $(wildcard usr/bin/*))
+SRCS_SCRIPTS	= $(filter-out %cron_mail, $(wildcard usr/local/sbin/*))
 SRCS_CONF	= $(wildcard etc/restic/*)
 SRCS_EXCLUDE	= example.backup_exclude
 SRCS_SYSTEMD	= $(wildcard etc/systemd/system/*)
@@ -12,7 +12,8 @@ SRCS_SYSTEMD	= $(wildcard etc/systemd/system/*)
 DEST_SCRIPTS	= $(PREFIX)/usr/bin
 DEST_CONF	= $(PREFIX)/etc/restic
 DEST_EXCLUDE	= $(PREFIX)/
-DEST_SYSTEMD	= $(PREFIX)/etc/systemd/system
+DEST_SYSTEMD	= $(PREFIX)/usr/lib/systemd/system
+DEST_LICENSE	= $(PREFIX)/usr/share/licenses/restic-systemd-automatic-backup-git
 
 
 ### Targets ###
@@ -29,11 +30,17 @@ install: install-scripts install-conf install-systemd
 
 # target: install-scripts - Install executables.
 install-scripts:
+	$(info install-scripts)
+	$(info SRCS_SCRIPTS is $(SRCS_SCRIPTS))
 	install -d $(DEST_SCRIPTS)
 	install -m 744 $(SRCS_SCRIPTS) $(DEST_SCRIPTS)
+	install -d $(DEST_LICENSE)
+	install -m 744 LICENSE $(DEST_LICENSE)
+	
 
 # target: install-conf - Install restic configuration files.
 install-conf:
+	$(info install-conf)
 	install -d $(DEST_CONF) -m 700
 	install $(SRCS_CONF) $(DEST_CONF)
 
@@ -43,5 +50,6 @@ install-exclude:
 
 # target: install-systemd - Install systemd timer and service files
 install-systemd:
+	$(info install-systemd)
 	install -d $(DEST_SYSTEMD)
 	install -m 0644 $(SRCS_SYSTEMD) $(DEST_SYSTEMD)
