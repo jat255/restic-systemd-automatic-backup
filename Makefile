@@ -24,7 +24,7 @@ help:
 	@egrep "#\starget:" [Mm]akefile  | sed 's/\s-\s/\t\t\t/' | cut -d " " -f3- | sort -d
 
 # target: install - Install all files
-install: install-scripts install-conf install-exclude install-systemd
+install: install-scripts install-conf install-systemd
 
 
 # target: install-scripts - Install executables.
