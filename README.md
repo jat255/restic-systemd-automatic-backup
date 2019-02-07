@@ -17,7 +17,7 @@ Note, you can use any of the supported [storage backends](https://restic.readthe
 
 ## Set up
 
-To install on Arch Linux, it should be enouch to just pull down the 
+To install on Arch Linux, it should be enough to just pull down the
 [PKGBUILD](https://github.com/jat255/restic-systemd-automatic-backup/blob/master/PKGBUILD) file,
 run `makepkg`, and install with `pacman`.
 
@@ -123,7 +123,7 @@ Once in a while it can be good to do a health check of the remote repository, to
 
 There are some `*-check*`-files in this git repo. Install these in the same way you installed the `*-backup*`-files.
 
-## Cron?
+## What about Cron
 
 If you want to run an all-classic cron job instead, do like this:
 
