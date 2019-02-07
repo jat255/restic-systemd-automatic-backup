@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Make backup my system with restic to Backblaze B2.
+# Make backup my system with restic
 # This script is typically run by: /etc/systemd/system/restic-backup.{service,timer}
 
 # Exit on failure, pipe failure
@@ -16,23 +16,19 @@ exit_hook() {
 trap exit_hook INT TERM
 
 # How many backups to keep.
-RETENTION_DAYS=14
-RETENTION_WEEKS=16
-RETENTION_MONTHS=18
-RETENTION_YEARS=3
+RETENTION_DAYS=7
+RETENTION_WEEKS=5
+RETENTION_MONTHS=12
+RETENTION_YEARS=10
 
 # What to backup, and what to not
-BACKUP_PATHS="/ /boot /home /mnt/media"
-BACKUP_EXCLUDES="--exclude-file /.backup_exclude --exclude-file /mnt/media/.backup_exclude --exclude-file /home/erikw/.backup_exclude"
+BACKUP_PATHS="/"
+BACKUP_EXCLUDES="--exclude-file $HOME/.restic_excludes"
 BACKUP_TAG=systemd.timer
 
 
-# Set all environment variables like
-# B2_ACCOUNT_ID, B2_ACCOUNT_KEY, RESTIC_REPOSITORY etc.
+# Set all environment variables
 source /etc/restic/b2_env.sh
-
-# How many network connections to set up to B2. Default is 5.
-B2_CONNECTIONS=50
 
 # NOTE start all commands in background and wait for them to finish.
 # Reason: bash ignores any signals while child process is executing and thus my trap exit hook is not triggered.
@@ -72,7 +68,6 @@ wait $!
 # Remove old data not linked anymore.
 # See restic-prune(1) or http://restic.readthedocs.io/en/latest/060_forget.html
 restic prune \
-	--option b2.connections=$B2_CONNECTIONS \
 	--verbose &
 wait $!
 

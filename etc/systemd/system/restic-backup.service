@@ -1,5 +1,5 @@
 [Unit]
-Description=Backup with restic to Backblaze B2
+Description=Backup with restic to remote server
 OnFailure=status-email-user@%n.service
 
 [Service]
