@@ -33,9 +33,9 @@ install-scripts:
 	$(info install-scripts)
 	$(info SRCS_SCRIPTS is $(SRCS_SCRIPTS))
 	install -d $(DEST_SCRIPTS)
-	install -m 744 $(SRCS_SCRIPTS) $(DEST_SCRIPTS)
+	install -m 755 $(SRCS_SCRIPTS) $(DEST_SCRIPTS)
 	install -d $(DEST_LICENSE)
-	install -m 744 LICENSE $(DEST_LICENSE)
+	install -m 644 LICENSE $(DEST_LICENSE)
 	
 
 # target: install-conf - Install restic configuration files.
@@ -52,4 +52,4 @@ install-exclude:
 install-systemd:
 	$(info install-systemd)
 	install -d $(DEST_SYSTEMD)
-	install -m 0644 $(SRCS_SYSTEMD) $(DEST_SYSTEMD)
+	install -m 0755 $(SRCS_SYSTEMD) $(DEST_SYSTEMD)
