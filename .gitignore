@@ -1,0 +1,4 @@
+pkg/
+src/
+restic-systemd-automatic-backup/
+*.pkg.tar.xz
