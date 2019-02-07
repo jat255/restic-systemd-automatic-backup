@@ -1,15 +1,15 @@
 # Maintainer: Joshua Taillon <jat255 AT gmail DOT com>
 _pkgname=restic-systemd-automatic-backup
 pkgname=$_pkgname-git
-pkgver=r47.1df597a
+pkgver=r48.e9900c5
 pkgrel=1
 pkgdesc="A restic backup solution using systemd timers (or cron) and email notifications on failure."
 arch=('any')
 url="https://github.com/jat255/restic-systemd-automatic-backup"
 license=('BSD')
 depends=('restic' 'bash')
-backup=('etc/restic_env.sh' 
-        'etc/restic_backup_excludes' 
+backup=('etc/restic/restic_env.sh' 
+        'etc/restic/restic_backup_excludes' 
         'usr/lib/systemd/system/status-email-user@.service')
 source=("$_pkgname::git+https://github.com/jat255/$_pkgname.git")
 md5sums=('SKIP')
