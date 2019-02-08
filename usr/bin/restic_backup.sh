@@ -15,6 +15,17 @@ exit_hook() {
 }
 trap exit_hook INT TERM
 
+# check to see if we can reach inet (meaning we're on NIST network)
+response=$(curl -Is https://inet.nist.gov | head -n 1 | grep -qs 200 &> /dev/null; echo $?)
+if [ "$response" == 0 ]; then
+    echo "Network connected, running backup..."
+else
+	# we should exit, but pretend we succeeded so as to not trigger an OnFailure
+	# status in the systemd unit
+   	echo "Not connected; skipping backup"
+	exit 0
+fi
+
 # How many backups to keep.
 RETENTION_DAYS=7
 RETENTION_WEEKS=5
