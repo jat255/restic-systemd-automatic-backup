@@ -37,6 +37,7 @@ BACKUP_PATHS="/"
 BACKUP_EXCLUDES="--exclude-file /etc/restic/restic_backup_excludes"
 BACKUP_TAG=systemd.timer
 
+mount /mnt/cfs2e_jat
 
 # Set all environment variables
 source /etc/restic/restic_env.sh
