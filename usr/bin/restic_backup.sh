@@ -37,7 +37,13 @@ BACKUP_PATHS="/"
 BACKUP_EXCLUDES="--exclude-file /etc/restic/restic_backup_excludes"
 BACKUP_TAG=systemd.timer
 
-mount /mnt/cfs2e_jat
+directory=/mnt/cfs2e_jat
+if mount | grep $directory > /dev/null; then
+    echo "$directory is already mounted"
+else
+	echo "mounting $directory"
+    mount $directory
+fi
 
 # Set all environment variables
 source /etc/restic/restic_env.sh
