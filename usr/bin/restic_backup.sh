@@ -37,7 +37,7 @@ BACKUP_PATHS="/"
 BACKUP_EXCLUDES="--exclude-file /etc/restic/restic_backup_excludes"
 BACKUP_TAG=systemd.timer
 
-directory=/mnt/cfs2e_jat
+directory=/mnt/carson_data
 if mount | grep $directory > /dev/null; then
     echo "$directory is already mounted"
 else
