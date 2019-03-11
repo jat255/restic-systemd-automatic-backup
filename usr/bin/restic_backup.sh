@@ -16,7 +16,8 @@ exit_hook() {
 trap exit_hook INT TERM
 
 # check to see if we can reach inet (meaning we're on NIST network)
-response=$(curl -Is https://inet.nist.gov | head -n 1 | grep -qs 200 &> /dev/null; echo $?)
+# NOTE: inet can also respond with a 302...
+response=$(curl -Is https://inet.nist.gov | head -n 1 | grep -Eqs '200|302' &> /dev/null; echo $?)
 if [ "$response" == 0 ]; then
     echo "Network connected, running backup..."
 else
