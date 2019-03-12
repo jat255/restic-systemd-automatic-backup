@@ -15,11 +15,10 @@ exit_hook() {
 }
 trap exit_hook INT TERM
 
-# check to see if we can reach inet (meaning we're on NIST network)
-# NOTE: inet can also respond with a 302...
-response=$(curl -Is https://inet.nist.gov | head -n 1 | grep -Eqs '200|302' &> /dev/null; echo $?)
+# check to see if we can ping carson ssh port using nmap
+response=$(nmap carson.nist.gov -PN -p ssh &> /dev/null | grep -Eqs 'open' &> /dev/null; echo $?)
 if [ "$response" == 0 ]; then
-    echo "Network connected, running backup..."
+    echo "Backup location connected, running backup..."
 else
 	# we should exit, but pretend we succeeded so as to not trigger an OnFailure
 	# status in the systemd unit
