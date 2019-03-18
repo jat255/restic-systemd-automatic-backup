@@ -22,7 +22,7 @@ if [ "$response" == 0 ]; then
 else
 	# we should exit, but pretend we succeeded so as to not trigger an OnFailure
 	# status in the systemd unit
-   	echo "Not connected; skipping backup"
+   	echo "Could not connect to backup location; skipping backup"
 	exit 0
 fi
 
@@ -40,6 +40,7 @@ BACKUP_TAG=systemd.timer
 directory=/mnt/carson_data
 if mount | grep $directory > /dev/null; then
     echo "$directory is already mounted"
+	was_mounted=true
 else
 	echo "mounting $directory"
     mount $directory
@@ -92,5 +93,10 @@ wait $!
 # NOTE this takes much time (and data transfer from remote repo?), do this in a separate systemd.timer which is run less often.
 #restic check &
 #wait $!
+
+if ! [[ -z was_mounted ]]; then
+	echo "${directory} was not mounted at start, so unmounting"
+	umount ${directory}
+fi
 
 echo "Backup & cleaning is done."
