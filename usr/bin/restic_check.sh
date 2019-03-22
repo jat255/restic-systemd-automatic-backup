@@ -21,17 +21,17 @@ exit_hook() {
 trap exit_hook INT TERM
 
 directory=/mnt/carson_data
-if mount | grep $directory > /dev/null; then
-    echo "$directory is already mounted"
+if mount | grep ${directory} > /dev/null; then
+    echo "${directory} is already mounted"
 	was_mounted=true
 else
-	echo "mounting $directory"
-    mount $directory
+	echo "mounting ${directory}"
+    mount ${directory}
 fi
 
 # check to see if we can ping carson ssh port using nmap
 response=$(nmap carson.nist.gov -PN -p ssh 2> /dev/null | grep -Eqs 'open' &> /dev/null; echo $?)
-if [ "$response" == 0 ]; then
+if [ "${response}" == 0 ]; then
     echo "Backup location connected, running backup..."
 else
 	# we should exit

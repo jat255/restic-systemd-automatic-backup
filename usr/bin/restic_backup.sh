@@ -21,17 +21,17 @@ exit_hook() {
 trap exit_hook INT TERM
 
 directory=/mnt/carson_data
-if mount | grep $directory > /dev/null; then
-    echo "$directory is already mounted"
+if mount | grep ${directory} > /dev/null; then
+    echo "${directory} is already mounted"
 	was_mounted=true
 else
-	echo "mounting $directory"
-    mount $directory
+	echo "mounting ${directory}"
+    mount ${directory}
 fi
 
 # check to see if we can ping carson ssh port using nmap
 response=$(nmap carson.nist.gov -PN -p ssh 2> /dev/null | grep -Eqs 'open' &> /dev/null; echo $?)
-if [ "$response" == 0 ]; then
+if [ "${response}" == 0 ]; then
     echo "Backup location connected, running backup..."
 else
 	# we should exit, but pretend we succeeded so as to not trigger an OnFailure
@@ -41,6 +41,7 @@ else
 fi
 
 # How many backups to keep.
+RETENTION_HOURS=12
 RETENTION_DAYS=7
 RETENTION_WEEKS=5
 RETENTION_MONTHS=12
@@ -70,9 +71,9 @@ wait $!
 restic backup \
 	--verbose \
 	--one-file-system \
-	--tag $BACKUP_TAG \
-	$BACKUP_EXCLUDES \
-	$BACKUP_PATHS &
+	--tag ${BACKUP_TAG} \
+	${BACKUP_EXCLUDES} \
+	${BACKUP_PATHS} &
 wait $!
 
 # Dereference old backups.
@@ -80,12 +81,13 @@ wait $!
 # --group-by only the tag and path, and not by hostname. This is because I create a B2 Bucket per host, and if this hostname accidentially change some time, there would now be multiple backup sets.
 restic forget \
 	--verbose \
-	--tag $BACKUP_TAG \
+	--tag ${BACKUP_TAG} \
 	--group-by "paths,tags" \
-	--keep-daily $RETENTION_DAYS \
-	--keep-weekly $RETENTION_WEEKS \
-	--keep-monthly $RETENTION_MONTHS \
-	--keep-yearly $RETENTION_YEARS &
+	--keep-hourly ${RETENTION_HOURS} \
+	--keep-daily ${RETENTION_DAYS} \
+	--keep-weekly ${RETENTION_WEEKS} \
+	--keep-monthly ${RETENTION_MONTHS} \
+	--keep-yearly ${RETENTION_YEARS} &
 wait $!
 
 # Remove old data not linked anymore.
