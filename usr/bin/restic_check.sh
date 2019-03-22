@@ -12,9 +12,32 @@ exit_hook() {
 	echo "In exit_hook(), being killed" >&2
 	jobs -p | xargs kill
 	restic unlock
+
+	if ! [[ -z was_mounted ]]; then
+		echo "${directory} was not mounted at start, so unmounting"
+		umount ${directory}
+	fi
 }
 trap exit_hook INT TERM
 
+directory=/mnt/carson_data
+if mount | grep $directory > /dev/null; then
+    echo "$directory is already mounted"
+	was_mounted=true
+else
+	echo "mounting $directory"
+    mount $directory
+fi
+
+# check to see if we can ping carson ssh port using nmap
+response=$(nmap carson.nist.gov -PN -p ssh 2> /dev/null | grep -Eqs 'open' &> /dev/null; echo $?)
+if [ "$response" == 0 ]; then
+    echo "Backup location connected, running backup..."
+else
+	# we should exit
+   	echo "Could not connect to backup location; skipping backup"
+	exit 1
+fi
 
 source /etc/restic/restic_env.sh
 

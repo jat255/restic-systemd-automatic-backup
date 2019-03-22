@@ -1,7 +1,7 @@
 # Maintainer: Joshua Taillon <jat255 AT gmail DOT com>
 _pkgname=restic-systemd-automatic-backup
 pkgname=$_pkgname-git
-pkgver=r61.113d5dc
+pkgver=r64.fbd24e0
 pkgrel=1
 pkgdesc="A restic backup solution using systemd timers (or cron) and email notifications on failure."
 arch=('any')
