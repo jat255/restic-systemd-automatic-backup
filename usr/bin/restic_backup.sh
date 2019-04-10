@@ -17,6 +17,11 @@ exit_hook() {
 		echo "${directory} was not mounted at start, so unmounting"
 		umount ${directory}
 	fi
+
+	if ! [[ -z ONVPN ]]; then
+		echo "Unmounting carson_mnt on poole.nist.gov"
+		ssh poole "fusermount -u carson_mnt"
+	fi
 }
 trap exit_hook INT TERM
 
@@ -30,7 +35,9 @@ else
 	response=$(nmap carson.nist.gov -PN -p ssh 2> /dev/null | grep -Eqs 'filtered' &> /dev/null; echo $?)
 	if [ "${response}" == 0 ]; then
 		echo "We appear to be on VPN, running backup..."
+		ONVPN=true
 		directory=/mnt/carson_data_vpn
+		ssh poole "sshfs carson:/data/users/jtaillon carson_mnt"
 	else
 		# we should exit
 		echo "Could not connect to backup location; skipping backup"
