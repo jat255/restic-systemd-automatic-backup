@@ -20,7 +20,24 @@ exit_hook() {
 }
 trap exit_hook INT TERM
 
-directory=/mnt/carson_data
+# check to see if we can ping carson ssh port using nmap
+response=$(nmap carson.nist.gov -PN -p ssh 2> /dev/null | grep -Eqs 'open' &> /dev/null; echo $?)
+if [ "${response}" == 0 ]; then
+    echo "Backup location connected, running backup..."
+	directory=/mnt/carson_data
+else
+	# Check to see if we're on VPN
+	response=$(nmap carson.nist.gov -PN -p ssh 2> /dev/null | grep -Eqs 'filtered' &> /dev/null; echo $?)
+	if [ "${response}" == 0 ]; then
+		echo "We appear to be on VPN, running backup..."
+		directory=/mnt/carson_data_vpn
+	else
+		# we should exit
+		echo "Could not connect to backup location; skipping backup"
+		exit 1
+	fi
+fi
+
 if mount | grep ${directory} > /dev/null; then
     echo "${directory} is already mounted"
 	was_mounted=true
@@ -29,16 +46,7 @@ else
     mount ${directory}
 fi
 
-# check to see if we can ping carson ssh port using nmap
-response=$(nmap carson.nist.gov -PN -p ssh 2> /dev/null | grep -Eqs 'open' &> /dev/null; echo $?)
-if [ "${response}" == 0 ]; then
-    echo "Backup location connected, running backup..."
-else
-	# we should exit, but pretend we succeeded so as to not trigger an OnFailure
-	# status in the systemd unit
-   	echo "Could not connect to backup location; skipping backup"
-	exit 0
-fi
+
 
 # How many backups to keep.
 RETENTION_HOURS=12
