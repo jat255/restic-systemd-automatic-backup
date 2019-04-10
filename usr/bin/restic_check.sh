@@ -13,9 +13,14 @@ exit_hook() {
 	jobs -p | xargs kill
 	restic unlock
 
-	if ! [[ -z was_mounted ]]; then
+	if ! [[ -z was_mounted ]]; then    # test if was_mounted is non-zero
 		echo "${directory} was not mounted at start, so unmounting"
 		umount ${directory}
+	fi
+
+	if ! [[ -z ONVPN ]]; then 		# test if ONVPN is non-zero
+		echo "Unmounting carson_mnt on poole.nist.gov"
+		ssh jat@poole.nist.gov "fusermount -u carson_mnt" 2> /dev/null
 	fi
 }
 trap exit_hook INT TERM
@@ -30,10 +35,12 @@ else
 	response=$(nmap carson.nist.gov -PN -p ssh 2> /dev/null | grep -Eqs 'filtered' &> /dev/null; echo $?)
 	if [ "${response}" == 0 ]; then
 		echo "We appear to be on VPN, running backup..."
+		ONVPN=true
 		directory=/mnt/carson_data_vpn
+		ssh jat@poole.nist.gov "if grep -qs 'carson:/data/users/jtaillon /home/jat/carson_mnt' /proc/mounts; then ; echo \"carson already mounted on poole\"; else; echo \"carson not mounted on poole; mounting\"; sshfs carson:/data/users/jtaillon carson_mnt; fi" 2> /dev/null
 	else
 		# we should exit
-		echo "Could not connect to backup location; skipping backup"
+		echo "Could not connect to backup location; skipping check"
 		exit 1
 	fi
 fi
@@ -49,6 +56,11 @@ fi
 
 
 source /etc/restic/restic_env.sh
+
+if ! [[ -z ONVPN ]]; then 		# test if ONVPN is non-zero
+	echo "Replacing repository path..."
+	export RESTIC_REPOSITORY=${RESTIC_REPOSITORY/carson_data/carson_data_vpn}
+fi
 
 # Remove locks from other stale processes to keep the automated backup running.
 # NOTE nope, dont' unlock like restic_backup.sh. restic_backup.sh should take preceedance over this script.

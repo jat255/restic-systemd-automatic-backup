@@ -13,14 +13,14 @@ exit_hook() {
 	jobs -p | xargs kill
 	restic unlock
 
-	if ! [[ -z was_mounted ]]; then
+	if ! [[ -z was_mounted ]]; then    # test if was_mounted is non-zero
 		echo "${directory} was not mounted at start, so unmounting"
 		umount ${directory}
 	fi
 
-	if ! [[ -z ONVPN ]]; then
+	if ! [[ -z ONVPN ]]; then 		# test if ONVPN is non-zero
 		echo "Unmounting carson_mnt on poole.nist.gov"
-		ssh poole "fusermount -u carson_mnt"
+		ssh jat@poole.nist.gov "fusermount -u carson_mnt" 2> /dev/null
 	fi
 }
 trap exit_hook INT TERM
@@ -37,7 +37,7 @@ else
 		echo "We appear to be on VPN, running backup..."
 		ONVPN=true
 		directory=/mnt/carson_data_vpn
-		ssh poole "sshfs carson:/data/users/jtaillon carson_mnt"
+		ssh jat@poole.nist.gov "if grep -qs 'carson:/data/users/jtaillon /home/jat/carson_mnt' /proc/mounts; then ; echo \"carson already mounted on poole\"; else; echo \"carson not mounted on poole; mounting\"; sshfs carson:/data/users/jtaillon carson_mnt; fi" 2> /dev/null
 	else
 		# we should exit
 		echo "Could not connect to backup location; skipping backup"
@@ -69,6 +69,11 @@ BACKUP_TAG=systemd.timer
 
 # Set all environment variables
 source /etc/restic/restic_env.sh
+
+if ! [[ -z ONVPN ]]; then 		# test if ONVPN is non-zero
+	echo "Replacing repository path..."
+	export RESTIC_REPOSITORY=${RESTIC_REPOSITORY/carson_data/carson_data_vpn}
+fi
 
 # NOTE start all commands in background and wait for them to finish.
 # Reason: bash ignores any signals while child process is executing and thus my trap exit hook is not triggered.
