@@ -13,12 +13,12 @@ exit_hook() {
 	jobs -p | xargs kill
 	restic unlock
 
-	if ! [[ -z was_mounted ]]; then    # test if was_mounted is non-zero
+	if ! [[ -z ${was_mounted} ]]; then    # test if was_mounted is non-zero
 		echo "${directory} was not mounted at start, so unmounting"
 		umount ${directory}
 	fi
 
-	if ! [[ -z ONVPN ]]; then 		# test if ONVPN is non-zero
+	if ! [[ -z ${ONVPN} ]]; then 		# test if ONVPN is non-zero
 		echo "Unmounting carson_mnt on poole.nist.gov"
 		ssh jat@poole.nist.gov "fusermount -u carson_mnt" 2> /dev/null
 	fi
@@ -57,7 +57,7 @@ fi
 
 source /etc/restic/restic_env.sh
 
-if ! [[ -z ONVPN ]]; then 		# test if ONVPN is non-zero
+if ! [[ -z ${ONVPN} ]]; then 		# test if ONVPN is non-zero
 	echo "Replacing repository path..."
 	export RESTIC_REPOSITORY=${RESTIC_REPOSITORY/carson_data/carson_data_vpn}
 fi
