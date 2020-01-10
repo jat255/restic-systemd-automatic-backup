@@ -68,6 +68,5 @@ fi
 #wait $!
 
 # Check repository for errors.
-restic check \
-	--verbose &
+GOMAXPROCS=1 restic check --verbose &
 wait $!

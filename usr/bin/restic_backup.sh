@@ -81,14 +81,14 @@ fi
 # Reference: https://unix.stackexchange.com/questions/146756/forward-sigterm-to-child-in-bash
 
 # Remove locks from other stale processes to keep the automated backup running.
-restic unlock &
+GOMAXPROCS=1 restic unlock &
 wait $!
 
 # Do the backup!
 # See restic-backup(1) or http://restic.readthedocs.io/en/latest/040_backup.html
 # --one-file-system makes sure we only backup exactly those mounted file systems specified in $BACKUP_PATHS, and thus not directories like /dev, /sys etc.
 # --tag lets us reference these backups later when doing restic-forget.
-restic backup \
+GOMAXPROCS=1 restic backup \
 	--verbose \
 	--one-file-system \
 	--tag ${BACKUP_TAG} \
@@ -99,7 +99,7 @@ wait $!
 # Dereference old backups.
 # See restic-forget(1) or http://restic.readthedocs.io/en/latest/060_forget.html
 # --group-by only the tag and path, and not by hostname. This is because I create a B2 Bucket per host, and if this hostname accidentially change some time, there would now be multiple backup sets.
-restic forget \
+GOMAXPROCS=1 restic forget \
 	--verbose \
 	--tag ${BACKUP_TAG} \
 	--group-by "paths,tags" \
@@ -112,7 +112,7 @@ wait $!
 
 # Remove old data not linked anymore.
 # See restic-prune(1) or http://restic.readthedocs.io/en/latest/060_forget.html
-restic prune \
+GOMAXPROCS=1 restic prune \
 	--verbose &
 wait $!
 
