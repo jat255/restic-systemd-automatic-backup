@@ -28,7 +28,7 @@ trap exit_hook INT TERM
 # check to see if we can ping carson ssh port using nmap
 response=$(nmap carson.nist.gov -PN -p ssh 2> /dev/null | grep -Eqs 'open' &> /dev/null; echo $?)
 if [ "${response}" == 0 ]; then
-    echo "Backup location connected, running backup..."
+    echo "Backup location available, running backup..."
 	directory=/mnt/carson_data
 else
 	# Check to see if we're on VPN
@@ -37,7 +37,7 @@ else
 		echo "We appear to be on VPN, running backup..."
 		ONVPN=true
 		directory=/mnt/carson_data_vpn
-		ssh jat@poole.nist.gov "if grep -qs 'carson:/data/users/jtaillon /home/jat/carson_mnt' /proc/mounts; then ; echo \"carson already mounted on poole\"; else; echo \"carson not mounted on poole; mounting\"; sshfs carson:/data/users/jtaillon carson_mnt; fi" 2> /dev/null
+		ssh jat@poole.campus.nist.gov "if grep -qs 'carson.nist.gov:/data/users/jtaillon /mnt/carson_data' /proc/mounts; then ; echo \"carson already mounted on poole\"; else; echo \"carson not mounted on poole; mounting\"; sshfs jtaillon@carson.nist.gov:/data/users/jtaillon /mnt/carson_data; fi" 2> /dev/null
 	else
 		# we should exit
 		echo "Could not connect to backup location; skipping backup"
